@@ -96,15 +96,29 @@ let getAccount = function (accountName) {
 
 
 if(command ==='create' && argv.name.length> 2 && argv.userName.length > 2&&argv.password.length>7){
-	createAccount({
-		name: argv.name,
-		userName: argv.userName,
-		password: argv.password
-	}, argv.master)
+	try {
+		createAccount({
+			name: argv.name,
+			userName: argv.userName,
+			password: argv.password
+		}, argv.master)
+
+	} catch (e) {
+		console.log('Unable to create account');
+	} finally {
+		console.log('Command Complete');
+	}
 }else if(command ==='create'&&(argv.name.length <=2||argv.userName.length<=2||argv.password.length<=7))
 	console.log('insufficient argument length')
 
-if(command === 'get' && argv.name.length > 2)
-	console.log(getAccount(argv.name, argv.master))
+if(command === 'get' && argv.name.length > 2){
+		try {
+			console.log(getAccount(argv.name, argv.master))
+		} catch (e) {
+			console.log('Unable to get account');
+		} finally {
+			console.log('Command Complete');
+		}
+}
 if(command == 'all')
 	console.log(JSON.parse(crypt.AES.decrypt(storage.getItemSync('accounts'),argv.master).toString(crypt.enc.Utf8)))
