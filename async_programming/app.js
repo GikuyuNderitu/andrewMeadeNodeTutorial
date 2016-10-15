@@ -1,20 +1,14 @@
-const request = require('request');
-let baseurl = 'http://api.openweathermap.org/data/2.5/weather?q=Annapolis&units=imperial'
+const weather = require('./mymodules/weather');
 let apikey = "aee920b7c6584f6d90294cda5c08ec2f"
 
-let url = baseurl+'&appid='+apikey
-
-request({
-  url: url,
-  json: true
-},(error, response, body)=>{
-  if (error) {
-    console.log('Unable to fetch weather.');
-  }else {
-    //console.log(JSON.stringify(body, null, 2));
-    let temp = body.main.temp
-    let name = body.name
+let printData = function(err, data){
+  if(err) console.error(err);
+  else{
+    let temp = data.main.temp
+    let name = data.name
 
     console.log("It's "+temp+" in "+name+".");
   }
-})
+}
+
+weather(apikey, printData)
