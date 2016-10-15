@@ -1,8 +1,8 @@
 const request = require('request');
-let baseurl = 'http://api.openweathermap.org/data/2.5/weather?q=Annapolis&units=imperial'
+let baseurl = 'http://api.openweathermap.org/data/2.5/weather?q='
 
-module.exports = function (apikey,callback) {
-  let url = baseurl + '&appid='+apikey
+module.exports = function (apikey,callback,city) {
+  let url = createURL(city, apikey)
   request({
     url: url,
     json: true
@@ -11,3 +11,7 @@ module.exports = function (apikey,callback) {
     else callback(null,body)
   })
 };
+
+let createURL = function (city, key) {
+  return baseurl + city + '&appid=' + key +'&units=imperial'
+}
