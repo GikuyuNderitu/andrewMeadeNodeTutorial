@@ -10,32 +10,46 @@ const args = require('yargs')
   .help('help')
   .argv
 
-let apikey = "aee920b7c6584f6d90294cda5c08ec2f"
+const apikey = "aee920b7c6584f6d90294cda5c08ec2f"
 
-let printData = function(err, data){
-  if(err) console.error(err);
-  else{
-    let temp = data.main.temp
+/*This function receives data passed by the weather promise function
+ *and prints the temperature and location of that temperature
+ */
+let printData = function(data){
+  let temp = data.main.temp
 
-    let name = data.name
+  let name = data.name
 
-    console.log("It's "+temp+" in "+name+".");
-  }
+  console.log("It's "+temp+" in "+name+".");
+
 }
 
-let locationData = function(err,data){
-  if(err) console.error(err);
-
-  else{
-    weather(apikey,printData, data.city)
-  }
+/*This function receives data passed by the location promise function
+ *and returns a promise to the weather promise function
+ */
+let locationData = function(data){
+   return weather(apikey, data.city)
 }
+
+
 
 if(args.location != '' && typeof args.location === 'string'  ){
   if(args.location.length > 3)
-    weather(apikey, printData, args.location)
-  else
+    weather(apikey, args.location).then(printData)
+  else{
     console.log('The location you supplied was not long enough')
+    console.log('We will approximate your current location and use that instead');
+    location()
+      .then(locationData)
+      .then(printData)
+  }
 }else{
-  location(locationData)
+  weather(apikey, args.location)
+    .catch((msg)=>{
+      console.error(msg)
+      console.log('We will approximate your current location and use that instead');
+      return location()
+    })
+    .then(locationData)
+    .then(printData)
 }
